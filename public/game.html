@@ -5,52 +5,148 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hit the Ball with Bat - Game</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Roboto:wght@400;500;700&display=swap');
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
+        :root {
+            /* Cyberpunk Theme (Default) */
+            --bg-primary: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            --bg-secondary: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            --color-accent: #00d4ff;
+            --color-secondary: #0099ff;
+            --color-success: #00ff88;
+            --color-warning: #ffaa00;
+            --color-danger: #ff0055;
+            --color-text: #fff;
+            --border-glow: rgba(0, 212, 255, 0.3);
+            --border-inset: rgba(0, 212, 255, 0.1);
+        }
+
+        body.theme-retro {
+            --bg-primary: linear-gradient(135deg, #ff006e 0%, #8338ec 50%, #3a86ff 100%);
+            --bg-secondary: linear-gradient(135deg, #3a0ca3 0%, #560bad 100%);
+            --color-accent: #ffbe0b;
+            --color-secondary: #fb5607;
+            --color-success: #06ffa5;
+            --color-warning: #ff006e;
+            --color-danger: #ff0000;
+            --border-glow: rgba(255, 190, 11, 0.3);
+            --border-inset: rgba(255, 190, 11, 0.1);
+        }
+
+        body.theme-ocean {
+            --bg-primary: linear-gradient(135deg, #001a33 0%, #003d66 50%, #004d99 100%);
+            --bg-secondary: linear-gradient(135deg, #0066cc 0%, #0052a3 100%);
+            --color-accent: #00d9ff;
+            --color-secondary: #00b3e6;
+            --color-success: #66ff99;
+            --color-warning: #ffcc00;
+            --color-danger: #ff6666;
+            --border-glow: rgba(0, 217, 255, 0.3);
+            --border-inset: rgba(0, 217, 255, 0.1);
+        }
+
+        body.theme-dark {
+            --bg-primary: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%);
+            --bg-secondary: linear-gradient(135deg, #333 0%, #222 100%);
+            --color-accent: #64ff00;
+            --color-secondary: #32ff00;
+            --color-success: #00ff00;
+            --color-warning: #ffaa00;
+            --color-danger: #ff4444;
+            --border-glow: rgba(100, 255, 0, 0.3);
+            --border-inset: rgba(100, 255, 0, 0.1);
+        }
+
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Roboto', sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--bg-primary);
+            color: var(--color-text);
+            overflow-x: hidden;
+            transition: background 0.5s ease;
         }
 
-        .container {
+        .main-container {
+            display: flex;
+            gap: 40px;
+            align-items: flex-start;
+            padding: 40px;
+            max-width: 1200px;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .game-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .header {
             text-align: center;
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            margin-bottom: 30px;
         }
 
         h1 {
-            color: #333;
-            margin-bottom: 20px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 48px;
+            background: linear-gradient(135deg, #00d4ff 0%, #0099ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+            font-weight: 900;
+            text-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+            letter-spacing: 2px;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            color: #00d4ff;
+            letter-spacing: 3px;
+            text-transform: uppercase;
         }
 
         .game-canvas {
             width: 600px;
             height: 400px;
-            background: #1a1a2e;
-            border: 3px solid #667eea;
-            margin: 20px auto;
+            background: var(--bg-secondary);
+            border: 3px solid var(--color-accent);
             position: relative;
             overflow: hidden;
-            border-radius: 5px;
+            border-radius: 15px;
+            box-shadow: 0 0 30px var(--border-glow), inset 0 0 30px var(--border-inset);
+            margin-bottom: 20px;
+            transition: all 0.5s ease;
         }
 
         .ball {
             position: absolute;
             width: 12px;
             height: 12px;
-            background: radial-gradient(circle at 30% 30%, #ffff00, #ffaa00);
+            background: radial-gradient(circle at 35% 35%, #ffff00, #ff8800);
             border-radius: 50%;
-            box-shadow: 0 0 10px rgba(255, 255, 0, 0.5);
+            box-shadow: 0 0 15px rgba(255, 255, 0, 0.8), 0 0 30px rgba(255, 200, 0, 0.5);
+            animation: ballGlow 1.5s ease-in-out infinite;
+        }
+
+        @keyframes ballGlow {
+            0%, 100% { box-shadow: 0 0 15px rgba(255, 255, 0, 0.8), 0 0 30px rgba(255, 200, 0, 0.5); }
+            50% { box-shadow: 0 0 20px rgba(255, 255, 0, 1), 0 0 40px rgba(255, 200, 0, 0.8); }
         }
 
         .bat {
@@ -58,127 +154,1124 @@
             bottom: 0;
             height: 10px;
             width: 90px;
-            background: linear-gradient(to right, #00ff88, #00cc88);
+            background: linear-gradient(to right, var(--color-success), #00aa77);
             border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.8), 0 0 40px rgba(0, 255, 136, 0.5);
+            transition: all 0.1s ease;
         }
 
-        .info {
-            display: flex;
-            justify-content: space-around;
-            margin-top: 20px;
-            font-size: 18px;
-            color: #333;
+        .bat:hover {
+            box-shadow: 0 0 30px rgba(0, 255, 136, 1), 0 0 60px rgba(0, 255, 136, 0.7);
         }
 
-        .info div {
-            background: #f0f0f0;
-            padding: 10px 20px;
-            border-radius: 5px;
-            min-width: 100px;
-        }
-
-        .info label {
-            display: block;
-            font-weight: bold;
-            color: #667eea;
-        }
-
-        .buttons {
-            margin-top: 20px;
-        }
-
-        button {
-            padding: 10px 20px;
-            margin: 0 10px;
+        .combo-display {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            border: 2px solid var(--color-accent);
+            border-radius: 10px;
+            padding: 10px 15px;
+            color: var(--color-accent);
+            font-family: 'Orbitron', sans-serif;
             font-size: 16px;
-            background: #667eea;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background 0.3s;
+            font-weight: 700;
+            display: none;
+            z-index: 50;
         }
 
-        button:hover {
-            background: #764ba2;
+        .combo-display.active {
+            display: block;
+            animation: comboPulse 0.3s ease;
+        }
+
+        @keyframes comboPulse {
+            0% { transform: scale(1.2); }
+            100% { transform: scale(1); }
         }
 
         .game-over {
             position: absolute;
             top: 50%;
             left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(0, 0, 0, 0.9);
-            color: #fff;
-            padding: 30px;
-            border-radius: 10px;
+            transform: translate(-50%, -50%) scale(0);
+            background: rgba(15, 12, 41, 0.95);
+            backdrop-filter: blur(10px);
+            border: 2px solid var(--color-accent);
+            color: var(--color-text);
+            padding: 40px;
+            border-radius: 15px;
             text-align: center;
             display: none;
             z-index: 100;
-            min-width: 250px;
+            min-width: 300px;
+            box-shadow: 0 0 40px var(--border-glow);
+            animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .game-over.show {
+            transform: translate(-50%, -50%) scale(1);
+            display: block;
+        }
+
+        @keyframes popIn {
+            0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
         }
 
         .game-over h2 {
-            font-size: 28px;
-            margin-bottom: 15px;
-            color: #ff6b6b;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 36px;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--color-danger) 0%, var(--color-warning) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .game-over p {
             font-size: 18px;
-            margin: 10px 0;
-            color: #ffd93d;
+            margin: 15px 0;
+            color: var(--color-accent);
         }
 
         .game-over button {
-            margin-top: 20px;
+            margin-top: 25px;
         }
 
-        .info-text {
+        .control-panel {
+            background: linear-gradient(135deg, rgba(48, 43, 99, 0.8) 0%, rgba(22, 33, 62, 0.8) 100%);
+            border: 2px solid var(--color-accent);
+            border-radius: 15px;
+            padding: 30px;
+            min-width: 280px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 0 20px var(--border-glow), inset 0 0 20px var(--border-inset);
+            backdrop-filter: blur(10px);
+            transition: all 0.5s ease;
+        }
+
+        .panel-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 18px;
+            color: var(--color-accent);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 25px;
+            text-align: center;
+            padding-bottom: 15px;
+            border-bottom: 2px solid rgba(0, 212, 255, 0.3);
+        }
+
+        .player-section {
+            background: rgba(0, 212, 255, 0.05);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--color-accent);
+        }
+
+        .player-section label {
+            font-size: 12px;
+            color: var(--color-accent);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .player-section input,
+        .player-section select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--color-accent);
+            color: var(--color-text);
+            border-radius: 5px;
+            font-family: 'Roboto', sans-serif;
             font-size: 14px;
-            color: #666;
-            margin-top: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .player-section input:focus,
+        .player-section select:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 0 10px var(--border-glow);
+        }
+
+        .player-section input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .settings-dropdown {
+            position: relative;
+            background: rgba(0, 212, 255, 0.05);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--color-accent);
+        }
+
+        .settings-dropdown label {
+            font-size: 12px;
+            color: var(--color-accent);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .settings-dropdown select {
+            width: 100%;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--color-accent);
+            color: var(--color-text);
+            border-radius: 5px;
+            font-family: 'Roboto', sans-serif;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .settings-dropdown select:hover,
+        .settings-dropdown select:focus {
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 0 10px var(--border-glow);
+            outline: none;
+        }
+
+        .settings-dropdown option {
+            background: #1a1a2e;
+            color: var(--color-text);
+        }
+
+        .player-name-display {
+            background: rgba(0, 212, 255, 0.1);
+            padding: 12px 15px;
+            border-radius: 10px;
+            border: 1px solid var(--color-accent);
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .player-name-display .label {
+            font-size: 11px;
+            color: var(--color-accent);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 500;
+        }
+
+        .player-name-display .name {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 18px;
+            color: var(--color-text);
+            margin-top: 5px;
+            font-weight: 700;
+        }
+
+        .difficulty-selector label {
+            font-size: 12px;
+            color: var(--color-accent);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        .difficulty-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .difficulty-btn {
+            flex: 1;
+            padding: 8px 12px;
+            font-size: 12px;
+            border: 1px solid var(--color-accent);
+            background: transparent;
+            color: var(--color-accent);
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .difficulty-btn:hover {
+            background: var(--color-accent);
+            color: #000;
+        }
+
+        .difficulty-btn.active {
+            background: var(--color-accent);
+            color: #000;
+        }
+
+        .theme-selector {
+            background: rgba(0, 212, 255, 0.05);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--color-accent);
+        }
+
+        .theme-selector label {
+            font-size: 12px;
+            color: var(--color-accent);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        .theme-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .theme-btn {
+            padding: 8px 12px;
+            font-size: 11px;
+            border: 1px solid var(--color-accent);
+            background: transparent;
+            color: var(--color-accent);
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .theme-btn:hover {
+            background: var(--color-accent);
+            color: #000;
+        }
+
+        .theme-btn.active {
+            background: var(--color-accent);
+            color: #000;
+        }
+
+        .leaderboard {
+            background: rgba(0, 212, 255, 0.05);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .leaderboard-title {
+            font-size: 12px;
+            color: var(--color-accent);
+            text-transform: uppercase;
+            font-weight: 700;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+
+        .leaderboard-entry {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(0, 212, 255, 0.1);
+            font-size: 13px;
+        }
+
+        .leaderboard-entry:last-child {
+            border-bottom: none;
+        }
+
+        .leaderboard-rank {
+            font-weight: 700;
+            color: var(--color-accent);
+            min-width: 25px;
+        }
+
+        .leaderboard-score {
+            font-family: 'Orbitron', sans-serif;
+            color: #fff;
+            margin-left: 10px;
+        }
+
+        .stat-box {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0, 212, 255, 0.05);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border-left: 4px solid #00d4ff;
+            transition: all 0.3s ease;
+        }
+
+        .stat-box:hover {
+            background: rgba(0, 212, 255, 0.1);
+            transform: translateX(5px);
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: var(--color-accent);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 500;
+        }
+
+        .stat-value {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 32px;
+            color: var(--color-text);
+            font-weight: 700;
+            min-width: 60px;
+            text-align: right;
+            animation: statPulse 0.3s ease;
+        }
+
+        @keyframes statPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(0, 212, 255, 0.05);
+            padding: 12px 15px;
+            border-radius: 10px;
+            border: 1px solid var(--color-accent);
+            margin-bottom: 25px;
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--color-success);
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        .status-dot.paused {
+            background: var(--color-warning);
+            animation: pulsePause 1.5s ease-in-out infinite;
+        }
+
+        .status-dot.stopped {
+            background: var(--color-danger);
+            animation: none;
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 5px rgba(0, 255, 136, 0.5); }
+            50% { box-shadow: 0 0 15px rgba(0, 255, 136, 1); }
+        }
+
+        @keyframes pulsePause {
+            0%, 100% { box-shadow: 0 0 5px rgba(255, 170, 0, 0.5); }
+            50% { box-shadow: 0 0 15px rgba(255, 170, 0, 1); }
+        }
+
+        .status-text {
+            font-size: 14px;
+            color: var(--color-text);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .button-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        button {
+            padding: 14px 28px;
+            font-size: 16px;
+            font-weight: 600;
+            color: white;
+            border: 2px solid var(--color-accent);
+            background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-secondary) 100%);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-family: 'Roboto', sans-serif;
+            position: relative;
+            overflow: hidden;
+        }
+
+        button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            transition: left 0.3s ease;
+            z-index: 0;
+        }
+
+        button:hover::before {
+            left: 100%;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px var(--border-glow);
+        }
+
+        button:active {
+            transform: translateY(0);
+            box-shadow: 0 4px 15px var(--border-glow);
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--color-accent);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--color-secondary);
+        }
+
+        .instructions {
+            font-size: 13px;
+            color: var(--color-accent);
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(0, 212, 255, 0.2);
+            line-height: 1.6;
+            text-align: center;
+            letter-spacing: 0.5px;
+        }
+
+        .info-icon {
+            display: inline-block;
+            margin-right: 5px;
+        }
+
+        @media (max-width: 1024px) {
+            .main-container {
+                flex-direction: column;
+                gap: 30px;
+                padding: 20px;
+            }
+
+            .game-section {
+                min-width: auto;
+            }
+
+            .control-panel {
+                min-width: 100%;
+            }
+
+            h1 {
+                font-size: 36px;
+            }
+
+            .game-canvas {
+                width: 100%;
+                max-width: 500px;
+                height: 350px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                gap: 15px;
+                padding: 15px;
+                align-items: center;
+            }
+
+            h1 {
+                font-size: 28px;
+                margin-bottom: 5px;
+            }
+
+            .subtitle {
+                font-size: 12px;
+            }
+
+            .game-canvas {
+                width: 100%;
+                max-width: 100%;
+                height: 40vh;
+                max-height: 400px;
+                min-height: 280px;
+                border-radius: 10px;
+            }
+
+            .control-panel {
+                width: 100%;
+                padding: 20px;
+                max-height: none;
+                border-radius: 10px;
+            }
+
+            .panel-title {
+                font-size: 16px;
+                margin-bottom: 15px;
+                padding-bottom: 10px;
+            }
+
+            button {
+                padding: 12px 20px;
+                font-size: 14px;
+                border-radius: 8px;
+            }
+
+            .difficulty-buttons,
+            .theme-buttons {
+                gap: 6px;
+            }
+
+            .difficulty-btn,
+            .theme-btn {
+                padding: 6px 10px;
+                font-size: 11px;
+                border-radius: 4px;
+            }
+
+            .stat-box {
+                padding: 12px;
+                margin-bottom: 10px;
+            }
+
+            .stat-label {
+                font-size: 12px;
+            }
+
+            .stat-value {
+                font-size: 24px;
+                min-width: 50px;
+            }
+
+            .instructions {
+                font-size: 12px;
+                margin-top: 15px;
+                padding-top: 15px;
+            }
+
+            .player-section input,
+            .player-section select {
+                font-size: 16px;
+                padding: 12px;
+            }
+
+            .leaderboard {
+                max-height: 150px;
+                padding: 12px;
+            }
+
+            .leaderboard-entry {
+                padding: 6px 0;
+                font-size: 12px;
+            }
+
+            .combo-display {
+                top: 15px;
+                right: 15px;
+                padding: 8px 12px;
+                font-size: 14px;
+            }
+
+            .status-indicator {
+                padding: 10px 12px;
+            }
+
+            .status-dot {
+                width: 10px;
+                height: 10px;
+            }
+
+            .status-text {
+                font-size: 12px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            * {
+                -webkit-touch-callout: none;
+                -webkit-user-select: none;
+            }
+
+            body {
+                min-height: 100vh;
+                overflow-x: hidden;
+            }
+
+            .main-container {
+                gap: 10px;
+                padding: 10px;
+                flex-direction: column;
+            }
+
+            .header {
+                margin-bottom: 15px;
+            }
+
+            h1 {
+                font-size: 22px;
+                margin-bottom: 3px;
+                letter-spacing: 1px;
+            }
+
+            .subtitle {
+                font-size: 10px;
+                letter-spacing: 2px;
+            }
+
+            .game-section {
+                width: 100%;
+            }
+
+            .game-canvas {
+                width: 100vw;
+                max-width: 100vw;
+                height: 50vh;
+                max-height: 350px;
+                min-height: 250px;
+                margin-left: -10px;
+                margin-right: -10px;
+                border-radius: 0;
+                border: 3px solid var(--color-accent);
+            }
+
+            .control-panel {
+                width: 100%;
+                padding: 15px;
+                gap: 0;
+                max-height: 50vh;
+                overflow-y: auto;
+                border-radius: 15px 15px 0 0;
+            }
+
+            .panel-title {
+                font-size: 14px;
+                margin-bottom: 12px;
+                padding-bottom: 8px;
+            }
+
+            button {
+                padding: 12px 16px;
+                font-size: 13px;
+                width: 100%;
+                min-height: 44px;
+                border-radius: 6px;
+                margin-bottom: 8px;
+            }
+
+            .button-group {
+                gap: 10px;
+                margin-top: 15px;
+            }
+
+            .difficulty-buttons {
+                flex-direction: row;
+                gap: 5px;
+            }
+
+            .difficulty-btn {
+                flex: 1;
+                padding: 8px 6px;
+                font-size: 10px;
+                min-height: 38px;
+                border-radius: 4px;
+            }
+
+            .theme-buttons {
+                flex-wrap: wrap;
+                gap: 5px;
+            }
+
+            .theme-btn {
+                flex: 0 1 calc(50% - 3px);
+                padding: 8px 6px;
+                font-size: 9px;
+                min-height: 36px;
+                border-radius: 4px;
+            }
+
+            .player-section,
+            .settings-dropdown,
+            .difficulty-selector,
+            .theme-selector {
+                padding: 12px;
+                margin-bottom: 12px;
+                border-radius: 8px;
+            }
+
+            .player-section label,
+            .settings-dropdown label,
+            .difficulty-selector label,
+            .theme-selector label {
+                font-size: 11px;
+                margin-bottom: 8px;
+            }
+
+            .player-section input,
+            .player-section select,
+            .settings-dropdown select {
+                font-size: 16px;
+                padding: 12px;
+                min-height: 44px;
+                border-radius: 6px;
+                margin-bottom: 8px;
+            }
+
+            .stat-box {
+                padding: 10px;
+                margin-bottom: 8px;
+                border-radius: 8px;
+            }
+
+            .stat-label {
+                font-size: 11px;
+            }
+
+            .stat-value {
+                font-size: 22px;
+                min-width: 45px;
+            }
+
+            .combo-display {
+                top: 12px;
+                right: 12px;
+                padding: 6px 10px;
+                font-size: 12px;
+                border-radius: 8px;
+            }
+
+            .status-indicator {
+                padding: 10px;
+                margin-bottom: 12px;
+                min-height: 44px;
+            }
+
+            .status-dot {
+                width: 10px;
+                height: 10px;
+            }
+
+            .status-text {
+                font-size: 12px;
+            }
+
+            .player-name-display {
+                padding: 10px;
+                margin-bottom: 12px;
+                min-height: 50px;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+            }
+
+            .player-name-display .label {
+                font-size: 10px;
+            }
+
+            .player-name-display .name {
+                font-size: 16px;
+                margin-top: 4px;
+            }
+
+            .leaderboard {
+                max-height: 120px;
+                padding: 10px;
+                margin-top: 12px;
+                border-radius: 8px;
+            }
+
+            .leaderboard-title {
+                font-size: 11px;
+                margin-bottom: 8px;
+            }
+
+            .leaderboard-entry {
+                padding: 5px 0;
+                font-size: 12px;
+            }
+
+            .leaderboard-rank {
+                min-width: 20px;
+            }
+
+            .leaderboard-score {
+                font-size: 12px;
+            }
+
+            .instructions {
+                font-size: 11px;
+                margin-top: 12px;
+                padding-top: 12px;
+                line-height: 1.5;
+            }
+
+            .info-icon {
+                font-size: 16px;
+            }
+
+            ::-webkit-scrollbar {
+                width: 6px;
+            }
+
+            ::-webkit-scrollbar-track {
+                background: rgba(0, 0, 0, 0.1);
+            }
+
+            ::-webkit-scrollbar-thumb {
+                background: var(--color-accent);
+                border-radius: 6px;
+            }
+        }
+
+        @media (max-width: 360px) {
+            h1 {
+                font-size: 18px;
+            }
+
+            .subtitle {
+                font-size: 9px;
+            }
+
+            .game-canvas {
+                height: 45vh;
+                min-height: 220px;
+            }
+
+            .panel-title {
+                font-size: 12px;
+            }
+
+            button {
+                font-size: 12px;
+                padding: 10px 12px;
+                min-height: 40px;
+            }
+
+            .difficulty-btn,
+            .theme-btn {
+                min-height: 34px;
+            }
+
+            .stat-value {
+                font-size: 20px;
+            }
+        }
+
+        /* Landscape orientation */
+        @media (max-height: 500px) and (orientation: landscape) {
+            .main-container {
+                flex-direction: row;
+                gap: 15px;
+                padding: 10px;
+            }
+
+            .game-section {
+                min-width: 45%;
+            }
+
+            .control-panel {
+                min-width: 45%;
+                max-height: 90vh;
+            }
+
+            .game-canvas {
+                width: 100%;
+                height: 80vh;
+                max-height: 450px;
+            }
+
+            h1 {
+                font-size: 20px;
+                margin-bottom: 3px;
+            }
+
+            .header {
+                margin-bottom: 10px;
+            }
+
+            .button-group {
+                margin-top: 10px;
+            }
+
+            button {
+                padding: 8px 12px;
+                font-size: 12px;
+            }
+        }
+
+        /* Touch device optimizations */
+        @media (hover: none) and (pointer: coarse) {
+            button {
+                min-height: 44px;
+                padding: 12px 16px;
+            }
+
+            input,
+            select {
+                font-size: 16px;
+                padding: 12px;
+            }
+
+            .difficulty-btn,
+            .theme-btn {
+                min-height: 40px;
+                padding: 10px 8px;
+            }
+
+            button:active {
+                opacity: 0.8;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>🎮 Hit the Ball with Bat</h1>
-        
-        <div class="game-canvas" id="gameCanvas">
-            <div class="ball" id="ball"></div>
-            <div class="bat" id="bat"></div>
-            <div class="game-over" id="gameOver">
-                <h2>Game Over!</h2>
-                <p>Final Score: <span id="finalScore">0</span></p>
-                <p>Total Hits: <span id="totalHits">0</span></p>
-                <button onclick="resetGame()">Play Again</button>
+    <div class="main-container">
+        <!-- Game Section -->
+        <div class="game-section">
+            <div class="header">
+                <h1>🎮 HIT THE BALL</h1>
+                <p class="subtitle">⚡ ARCADE GAME ⚡</p>
+            </div>
+            
+            <div class="game-canvas" id="gameCanvas">
+                <div class="combo-display" id="comboDisplay">COMBO: 0x</div>
+                <div class="ball" id="ball"></div>
+                <div class="bat" id="bat"></div>
+                <div class="game-over" id="gameOver">
+                    <h2>💥 GAME OVER!</h2>
+                    <p>Final Score: <span id="finalScore">0</span></p>
+                    <p>Total Hits: <span id="totalHits">0</span></p>
+                    <button onclick="resetGame()">Play Again</button>
+                </div>
             </div>
         </div>
 
-        <div class="info">
-            <div>
-                <label>Score</label>
-                <span id="score">0</span>
+        <!-- Control Panel -->
+        <div class="control-panel">
+            <div class="panel-title">⚙️ GAME CONTROL</div>
+            
+            <div class="player-section">
+                <label>Player Name</label>
+                <input type="text" id="playerName" placeholder="Enter your name" maxlength="20">
+                <button onclick="saveName()" style="width: 100%; padding: 8px;">💾 Save Name</button>
             </div>
-            <div>
-                <label>Hits</label>
-                <span id="hits">0</span>
-            </div>
-            <div>
-                <label>Status</label>
-                <span id="status">Playing</span>
-            </div>
-        </div>
 
-        <div class="buttons">
-            <button onclick="resetGame()">New Game</button>
-            <button onclick="togglePause()">Pause</button>
-        </div>
+            <div class="player-name-display" id="playerDisplay" style="display: none;">
+                <div class="label">Current Player</div>
+                <div class="name" id="currentPlayerName">Player</div>
+            </div>
 
-        <div class="info-text">
-            Move your mouse or use Arrow Keys (← →) to move the bat and hit the ball!
+            <div class="settings-dropdown">
+                <label>Ball Speed Settings</label>
+                <select id="ballSpeedSettings" onchange="setBallSpeed(this.value)">
+                    <option value="slow">🐢 Slow (Easy)</option>
+                    <option value="normal" selected>⚡ Normal</option>
+                    <option value="fast">🚀 Fast (Challenge)</option>
+                    <option value="insane">💥 Insane (Extreme)</option>
+                </select>
+            </div>
+
+            <div class="settings-dropdown">
+                <label>Game Mode</label>
+                <select id="gameMode" onchange="setGameMode(this.value)">
+                    <option value="endless" selected>∞ Endless (Classic)</option>
+                    <option value="survival">❤️ Survival (3 Lives)</option>
+                    <option value="time" disabled>⏱️ Time Attack (Coming Soon)</option>
+                </select>
+            </div>
+
+            <div class="difficulty-selector">
+                <label>Difficulty Level</label>
+                <div class="difficulty-buttons">
+                    <button class="difficulty-btn active" onclick="setDifficulty('easy')">Easy</button>
+                    <button class="difficulty-btn" onclick="setDifficulty('normal')">Normal</button>
+                    <button class="difficulty-btn" onclick="setDifficulty('hard')">Hard</button>
+                </div>
+            </div>
+
+            <div class="theme-selector">
+                <label>Theme</label>
+                <div class="theme-buttons">
+                    <button class="theme-btn active" onclick="setTheme('cyberpunk')">Cyber</button>
+                    <button class="theme-btn" onclick="setTheme('retro')">Retro</button>
+                    <button class="theme-btn" onclick="setTheme('ocean')">Ocean</button>
+                    <button class="theme-btn" onclick="setTheme('dark')">Dark</button>
+                </div>
+            </div>
+
+            <div class="panel-title" style="margin-top: 30px;">📊 STATS</div>
+            
+            <div class="status-indicator">
+                <div class="status-dot" id="statusDot"></div>
+                <div class="status-text" id="status">Playing 🎯</div>
+            </div>
+
+            <div class="stat-box">
+                <div class="stat-label">Score</div>
+                <div class="stat-value" id="score">0</div>
+            </div>
+
+            <div class="stat-box">
+                <div class="stat-label">Hits</div>
+                <div class="stat-value" id="hits">0</div>
+            </div>
+
+            <div class="stat-box">
+                <div class="stat-label">Combo</div>
+                <div class="stat-value" id="combo">0x</div>
+            </div>
+
+            <div class="stat-box" id="livesBox" style="display: none;">
+                <div class="stat-label">Lives</div>
+                <div class="stat-value" id="lives">3</div>
+            </div>
+
+            <div class="button-group" style="margin-top: 25px;">
+                <button onclick="resetGame()">🔄 New Game</button>
+                <button onclick="togglePause()" id="pauseBtn">⏸️ Pause</button>
+                <button onclick="toggleSound()" id="soundBtn">🔊 Sound ON</button>
+            </div>
+
+            <div class="leaderboard">
+                <div class="leaderboard-title">🏆 TOP SCORES</div>
+                <div id="leaderboardList"></div>
+            </div>
+
+            <div class="instructions">
+                <div class="info-icon">🎮</div>
+                <strong>CONTROLS:</strong><br>
+                Move mouse or use ← → Keys to move the bat and hit the ball!
+            </div>
         </div>
     </div>
 
@@ -190,14 +1283,52 @@
         const scoreDisplay = document.getElementById('score');
         const hitsDisplay = document.getElementById('hits');
         const statusDisplay = document.getElementById('status');
+        const statusDot = document.getElementById('statusDot');
+        const comboDisplay = document.getElementById('comboDisplay');
         const finalScoreDisplay = document.getElementById('finalScore');
         const totalHitsDisplay = document.getElementById('totalHits');
+        const pauseBtn = document.getElementById('pauseBtn');
+        const soundBtn = document.getElementById('soundBtn');
+        const comboValue = document.getElementById('combo');
+        const leaderboardList = document.getElementById('leaderboardList');
+        const playerNameInput = document.getElementById('playerName');
+        const playerDisplay = document.getElementById('playerDisplay');
+        const currentPlayerName = document.getElementById('currentPlayerName');
+        const ballSpeedSelect = document.getElementById('ballSpeedSettings');
+        const gameModeSelect = document.getElementById('gameMode');
+        const livesBox = document.getElementById('livesBox');
+        const livesDisplay = document.getElementById('lives');
 
         const CANVAS_WIDTH = 600;
         const CANVAS_HEIGHT = 400;
         const BAT_WIDTH = 90;
         const BAT_HEIGHT = 10;
         const BALL_SIZE = 12;
+
+        // Ball speed multipliers
+        const ballSpeedSettings = {
+            slow: 0.6,
+            normal: 1.0,
+            fast: 1.4,
+            insane: 1.8
+        };
+
+        // Difficulty settings
+        const difficultySettings = {
+            easy: { speedMultiplier: 0.8, ballSpeedIncrease: 1.02 },
+            normal: { speedMultiplier: 1.0, ballSpeedIncrease: 1.05 },
+            hard: { speedMultiplier: 1.3, ballSpeedIncrease: 1.08 }
+        };
+
+        let difficulty = 'normal';
+        let ballSpeedMultiplier = 1.0;
+        let gameMode = 'endless';
+        let soundEnabled = true;
+        let gamePaused = false;
+        let consecutiveHits = 0;
+        let highScores = [];
+        let playerName = 'Player';
+        let lives = 3;
 
         let gameState = {
             ballX: 300,
@@ -210,7 +1341,121 @@
             gameActive: true
         };
 
-        let gamePaused = false;
+        // Save player name
+        function saveName() {
+            const name = playerNameInput.value.trim();
+            if (name) {
+                playerName = name;
+                localStorage.setItem('playerName', playerName);
+                playerDisplay.style.display = 'block';
+                currentPlayerName.textContent = playerName;
+                playerNameInput.value = '';
+                playSound(800, 100);
+            }
+        }
+
+        // Set ball speed
+        function setBallSpeed(speed) {
+            ballSpeedMultiplier = ballSpeedSettings[speed];
+            playSound(400, 80);
+        }
+
+        // Set game mode
+        function setGameMode(mode) {
+            gameMode = mode;
+            if (mode === 'survival') {
+                lives = 3;
+                livesBox.style.display = 'flex';
+                livesDisplay.textContent = lives;
+            } else {
+                livesBox.style.display = 'none';
+            }
+            resetGame();
+            playSound(500, 80);
+        }
+
+        // Load high scores from localStorage
+        function loadHighScores() {
+            const saved = localStorage.getItem('highScores');
+            highScores = saved ? JSON.parse(saved) : [];
+            const savedName = localStorage.getItem('playerName');
+            if (savedName) {
+                playerName = savedName;
+                playerDisplay.style.display = 'block';
+                currentPlayerName.textContent = playerName;
+            }
+            updateLeaderboard();
+        }
+
+        // Save high scores to localStorage
+        function saveHighScores() {
+            localStorage.setItem('highScores', JSON.stringify(highScores));
+            updateLeaderboard();
+        }
+
+        // Update leaderboard display
+        function updateLeaderboard() {
+            leaderboardList.innerHTML = '';
+            const sorted = [...highScores].sort((a, b) => b - a).slice(0, 5);
+            if (sorted.length === 0) {
+                leaderboardList.innerHTML = '<div style="padding: 8px; text-align: center; color: rgba(255,255,255,0.5);">No scores yet</div>';
+                return;
+            }
+            sorted.forEach((score, idx) => {
+                const entry = document.createElement('div');
+                entry.className = 'leaderboard-entry';
+                entry.innerHTML = `
+                    <span class="leaderboard-rank">#${idx + 1}</span>
+                    <span class="leaderboard-score">${score}</span>
+                `;
+                leaderboardList.appendChild(entry);
+            });
+        }
+
+        // Sound effect generator using Web Audio API
+        function playSound(frequency = 400, duration = 100) {
+            if (!soundEnabled) return;
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.frequency.value = frequency;
+                oscillator.type = 'sine';
+                
+                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration / 1000);
+                
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + duration / 1000);
+            } catch (e) {
+                console.log('Audio API not available');
+            }
+        }
+
+        function setDifficulty(level) {
+            difficulty = level;
+            document.querySelectorAll('.difficulty-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            resetGame();
+        }
+
+        function setTheme(theme) {
+            document.body.className = '';
+            if (theme !== 'cyberpunk') {
+                document.body.classList.add('theme-' + theme);
+            }
+            document.querySelectorAll('.theme-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            soundBtn.textContent = soundEnabled ? '🔊 Sound ON' : '🔇 Sound OFF';
+        }
 
         function updateGame() {
             if (!gameState.gameActive || gamePaused) return;
@@ -223,18 +1468,32 @@
             if (gameState.ballX <= 0 || gameState.ballX >= CANVAS_WIDTH - BALL_SIZE) {
                 gameState.ballSpeedX *= -1;
                 gameState.ballX = Math.max(0, Math.min(CANVAS_WIDTH - BALL_SIZE, gameState.ballX));
+                playSound(300, 50);
             }
 
             // Ball collision with top
             if (gameState.ballY <= 0) {
                 gameState.ballSpeedY *= -1;
                 gameState.ballY = 0;
+                playSound(300, 50);
             }
 
-            // Ball collision with bottom (game over)
+            // Ball collision with bottom (game over / life lost)
             if (gameState.ballY >= CANVAS_HEIGHT) {
-                gameState.gameActive = false;
-                endGame();
+                if (gameMode === 'survival') {
+                    lives--;
+                    livesDisplay.textContent = lives;
+                    if (lives <= 0) {
+                        gameState.gameActive = false;
+                        endGame();
+                    } else {
+                        resetBallPosition();
+                        playSound(200, 150);
+                    }
+                } else {
+                    gameState.gameActive = false;
+                    endGame();
+                }
                 return;
             }
 
@@ -250,13 +1509,40 @@
             ) {
                 gameState.ballSpeedY = -Math.abs(gameState.ballSpeedY);
                 gameState.ballY = batTop - BALL_SIZE;
-                gameState.score += 10;
+                
+                // Apply combo multiplier
+                consecutiveHits++;
+                const comboMultiplier = Math.min(1 + (consecutiveHits * 0.5), 5);
+                gameState.score += Math.floor(10 * comboMultiplier);
                 gameState.hits += 1;
-                gameState.ballSpeedX *= 1.05;
-                gameState.ballSpeedY *= 1.05;
+                
+                const diffSettings = difficultySettings[difficulty];
+                gameState.ballSpeedX *= diffSettings.ballSpeedIncrease;
+                gameState.ballSpeedY *= diffSettings.ballSpeedIncrease;
+                
+                playSound(600 + (consecutiveHits * 50), 100);
+                
+                if (consecutiveHits > 1) {
+                    comboDisplay.textContent = `COMBO: ${consecutiveHits}x`;
+                    comboDisplay.classList.add('active');
+                }
+            } else {
+                if (gameState.ballY > batTop + 50 && consecutiveHits > 0) {
+                    consecutiveHits = 0;
+                    comboDisplay.classList.remove('active');
+                }
             }
 
             updateDisplay();
+        }
+
+        function resetBallPosition() {
+            gameState.ballX = 300;
+            gameState.ballY = 50;
+            gameState.ballSpeedX = 2 * ballSpeedMultiplier * difficultySettings[difficulty].speedMultiplier;
+            gameState.ballSpeedY = 2 * ballSpeedMultiplier * difficultySettings[difficulty].speedMultiplier;
+            consecutiveHits = 0;
+            comboDisplay.classList.remove('active');
         }
 
         function updateDisplay() {
@@ -265,34 +1551,66 @@
             bat.style.left = gameState.batX + 'px';
             scoreDisplay.textContent = gameState.score;
             hitsDisplay.textContent = gameState.hits;
-            statusDisplay.textContent = gameState.gameActive ? 'Playing 🎯' : 'Game Over ❌';
+            comboValue.textContent = consecutiveHits + 'x';
+
+            if (!gameState.gameActive) {
+                statusDisplay.textContent = 'Game Over ❌';
+                statusDot.classList.add('stopped');
+                statusDot.classList.remove('paused');
+            } else if (gamePaused) {
+                statusDisplay.textContent = 'Paused ⏸️';
+                statusDot.classList.add('paused');
+                statusDot.classList.remove('stopped');
+            } else {
+                statusDisplay.textContent = 'Playing 🎯';
+                statusDot.classList.remove('paused', 'stopped');
+            }
         }
 
         function resetGame() {
+            consecutiveHits = 0;
+            comboDisplay.classList.remove('active');
+            const diffSettings = difficultySettings[difficulty];
+            
             gameState = {
                 ballX: 300,
                 ballY: 50,
-                ballSpeedX: 2,
-                ballSpeedY: 2,
+                ballSpeedX: 2 * ballSpeedMultiplier * diffSettings.speedMultiplier,
+                ballSpeedY: 2 * ballSpeedMultiplier * diffSettings.speedMultiplier,
                 batX: 255,
                 score: 0,
                 hits: 0,
                 gameActive: true
             };
+            
+            if (gameMode === 'survival') {
+                lives = 3;
+                livesDisplay.textContent = lives;
+            }
+            
             gamePaused = false;
-            gameOverScreen.style.display = 'none';
+            gameOverScreen.classList.remove('show');
+            pauseBtn.textContent = '⏸️ Pause';
             updateDisplay();
         }
 
         function endGame() {
             finalScoreDisplay.textContent = gameState.score;
             totalHitsDisplay.textContent = gameState.hits;
-            gameOverScreen.style.display = 'block';
+            gameOverScreen.classList.add('show');
+            statusDisplay.textContent = 'Game Over ❌';
+            statusDot.classList.add('stopped');
+            
+            highScores.push(gameState.score);
+            saveHighScores();
+            
+            playSound(200, 200);
         }
 
         function togglePause() {
             gamePaused = !gamePaused;
-            statusDisplay.textContent = gamePaused ? 'Paused ⏸️' : 'Playing 🎯';
+            pauseBtn.textContent = gamePaused ? '▶️ Resume' : '⏸️ Pause';
+            updateDisplay();
         }
 
         // Mouse control
@@ -316,7 +1634,17 @@
 
         // Game loop
         setInterval(updateGame, 1000 / 60);
+        
+        // Initialize
+        loadHighScores();
         updateDisplay();
+        
+        // Allow Enter key to save name
+        playerNameInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                saveName();
+            }
+        });
     </script>
 </body>
 </html>
