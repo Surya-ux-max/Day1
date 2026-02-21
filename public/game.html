@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hit the Ball with Bat - Game</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .container {
+            text-align: center;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .game-canvas {
+            width: 600px;
+            height: 400px;
+            background: #1a1a2e;
+            border: 3px solid #667eea;
+            margin: 20px auto;
+            position: relative;
+            overflow: hidden;
+            border-radius: 5px;
+        }
+
+        .ball {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: radial-gradient(circle at 30% 30%, #ffff00, #ffaa00);
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(255, 255, 0, 0.5);
+        }
+
+        .bat {
+            position: absolute;
+            bottom: 0;
+            height: 10px;
+            width: 90px;
+            background: linear-gradient(to right, #00ff88, #00cc88);
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+        }
+
+        .info {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+            font-size: 18px;
+            color: #333;
+        }
+
+        .info div {
+            background: #f0f0f0;
+            padding: 10px 20px;
+            border-radius: 5px;
+            min-width: 100px;
+        }
+
+        .info label {
+            display: block;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .buttons {
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin: 0 10px;
+            font-size: 16px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background: #764ba2;
+        }
+
+        .game-over {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.9);
+            color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            display: none;
+            z-index: 100;
+            min-width: 250px;
+        }
+
+        .game-over h2 {
+            font-size: 28px;
+            margin-bottom: 15px;
+            color: #ff6b6b;
+        }
+
+        .game-over p {
+            font-size: 18px;
+            margin: 10px 0;
+            color: #ffd93d;
+        }
+
+        .game-over button {
+            margin-top: 20px;
+        }
+
+        .info-text {
+            font-size: 14px;
+            color: #666;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎮 Hit the Ball with Bat</h1>
+        
+        <div class="game-canvas" id="gameCanvas">
+            <div class="ball" id="ball"></div>
+            <div class="bat" id="bat"></div>
+            <div class="game-over" id="gameOver">
+                <h2>Game Over!</h2>
+                <p>Final Score: <span id="finalScore">0</span></p>
+                <p>Total Hits: <span id="totalHits">0</span></p>
+                <button onclick="resetGame()">Play Again</button>
+            </div>
+        </div>
+
+        <div class="info">
+            <div>
+                <label>Score</label>
+                <span id="score">0</span>
+            </div>
+            <div>
+                <label>Hits</label>
+                <span id="hits">0</span>
+            </div>
+            <div>
+                <label>Status</label>
+                <span id="status">Playing</span>
+            </div>
+        </div>
+
+        <div class="buttons">
+            <button onclick="resetGame()">New Game</button>
+            <button onclick="togglePause()">Pause</button>
+        </div>
+
+        <div class="info-text">
+            Move your mouse or use Arrow Keys (← →) to move the bat and hit the ball!
+        </div>
+    </div>
+
+    <script>
+        const gameCanvas = document.getElementById('gameCanvas');
+        const ball = document.getElementById('ball');
+        const bat = document.getElementById('bat');
+        const gameOverScreen = document.getElementById('gameOver');
+        const scoreDisplay = document.getElementById('score');
+        const hitsDisplay = document.getElementById('hits');
+        const statusDisplay = document.getElementById('status');
+        const finalScoreDisplay = document.getElementById('finalScore');
+        const totalHitsDisplay = document.getElementById('totalHits');
+
+        const CANVAS_WIDTH = 600;
+        const CANVAS_HEIGHT = 400;
+        const BAT_WIDTH = 90;
+        const BAT_HEIGHT = 10;
+        const BALL_SIZE = 12;
+
+        let gameState = {
+            ballX: 300,
+            ballY: 50,
+            ballSpeedX: 2,
+            ballSpeedY: 2,
+            batX: 255,
+            score: 0,
+            hits: 0,
+            gameActive: true
+        };
+
+        let gamePaused = false;
+
+        function updateGame() {
+            if (!gameState.gameActive || gamePaused) return;
+
+            // Update ball position
+            gameState.ballX += gameState.ballSpeedX;
+            gameState.ballY += gameState.ballSpeedY;
+
+            // Ball collision with walls
+            if (gameState.ballX <= 0 || gameState.ballX >= CANVAS_WIDTH - BALL_SIZE) {
+                gameState.ballSpeedX *= -1;
+                gameState.ballX = Math.max(0, Math.min(CANVAS_WIDTH - BALL_SIZE, gameState.ballX));
+            }
+
+            // Ball collision with top
+            if (gameState.ballY <= 0) {
+                gameState.ballSpeedY *= -1;
+                gameState.ballY = 0;
+            }
+
+            // Ball collision with bottom (game over)
+            if (gameState.ballY >= CANVAS_HEIGHT) {
+                gameState.gameActive = false;
+                endGame();
+                return;
+            }
+
+            // Check collision with bat
+            const batTop = CANVAS_HEIGHT - BAT_HEIGHT;
+            const ballBottom = gameState.ballY + BALL_SIZE;
+            
+            if (
+                ballBottom >= batTop &&
+                gameState.ballY <= CANVAS_HEIGHT &&
+                gameState.ballX + BALL_SIZE >= gameState.batX &&
+                gameState.ballX <= gameState.batX + BAT_WIDTH
+            ) {
+                gameState.ballSpeedY = -Math.abs(gameState.ballSpeedY);
+                gameState.ballY = batTop - BALL_SIZE;
+                gameState.score += 10;
+                gameState.hits += 1;
+                gameState.ballSpeedX *= 1.05;
+                gameState.ballSpeedY *= 1.05;
+            }
+
+            updateDisplay();
+        }
+
+        function updateDisplay() {
+            ball.style.left = gameState.ballX + 'px';
+            ball.style.top = gameState.ballY + 'px';
+            bat.style.left = gameState.batX + 'px';
+            scoreDisplay.textContent = gameState.score;
+            hitsDisplay.textContent = gameState.hits;
+            statusDisplay.textContent = gameState.gameActive ? 'Playing 🎯' : 'Game Over ❌';
+        }
+
+        function resetGame() {
+            gameState = {
+                ballX: 300,
+                ballY: 50,
+                ballSpeedX: 2,
+                ballSpeedY: 2,
+                batX: 255,
+                score: 0,
+                hits: 0,
+                gameActive: true
+            };
+            gamePaused = false;
+            gameOverScreen.style.display = 'none';
+            updateDisplay();
+        }
+
+        function endGame() {
+            finalScoreDisplay.textContent = gameState.score;
+            totalHitsDisplay.textContent = gameState.hits;
+            gameOverScreen.style.display = 'block';
+        }
+
+        function togglePause() {
+            gamePaused = !gamePaused;
+            statusDisplay.textContent = gamePaused ? 'Paused ⏸️' : 'Playing 🎯';
+        }
+
+        // Mouse control
+        gameCanvas.addEventListener('mousemove', (event) => {
+            const rect = gameCanvas.getBoundingClientRect();
+            const mouseX = event.clientX - rect.left;
+            gameState.batX = Math.max(0, Math.min(CANVAS_WIDTH - BAT_WIDTH, mouseX - BAT_WIDTH / 2));
+            updateDisplay();
+        });
+
+        // Keyboard control
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'ArrowLeft') {
+                gameState.batX = Math.max(0, gameState.batX - 15);
+                updateDisplay();
+            } else if (event.key === 'ArrowRight') {
+                gameState.batX = Math.min(CANVAS_WIDTH - BAT_WIDTH, gameState.batX + 15);
+                updateDisplay();
+            }
+        });
+
+        // Game loop
+        setInterval(updateGame, 1000 / 60);
+        updateDisplay();
+    </script>
+</body>
+</html>
