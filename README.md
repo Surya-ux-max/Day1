@@ -40,36 +40,6 @@ npm run start
 npm run start:dev
 ```
 
-## 🧪 Testing
-
-```bash
-# Unit tests
-npm run test
-
-# E2E tests
-npm run test:e2e
-
-# Test coverage
-npm run test:cov
-```
-
-## 🌐 Deployment
-
-### Deploy to Render
-
-1. Push your code to GitHub
-2. Go to [render.com](https://render.com)
-3. Click "New +" and select "Web Service"
-4. Connect your GitHub repository
-5. Fill in the details:
-   - Name: `hit-the-ball-game`
-   - Runtime: `Node`
-   - Build Command: `npm install`
-   - Start Command: `npm run start`
-6. Click "Create Web Service"
-
-The app will be deployed and available at your Render URL.
-
 ### Deploy to Vercel
 
 1. Push your code to GitHub
